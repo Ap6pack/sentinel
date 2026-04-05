@@ -1,0 +1,26 @@
+{
+  "london": {
+    "name": "London (The Shard)",
+    "lat": 51.5045,
+    "lon": -0.0865,
+    "alt": 50000,
+    "heading": 0,
+    "pitch": -45
+  },
+  "heathrow": {
+    "name": "Heathrow Airport",
+    "lat": 51.4700,
+    "lon": -0.4543,
+    "alt": 15000,
+    "heading": 270,
+    "pitch": -30
+  },
+  "channel": {
+    "name": "English Channel",
+    "lat": 50.9,
+    "lon": 1.2,
+    "alt": 100000,
+    "heading": 0,
+    "pitch": -60
+  }
+}

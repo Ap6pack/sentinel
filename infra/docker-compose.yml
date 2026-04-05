@@ -1,0 +1,120 @@
+version: "3.9"
+
+# Profiles:
+#   basic   — redis + core + rf + viz (no OSINT, no AI, no Postgres)
+#   full    — all services
+#   history — full + postgres persistence
+#   mock    — full with SENTINEL_RF_MOCK=true (no hardware needed)
+
+services:
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    profiles: ["basic", "full", "history", "mock"]
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: sentinel
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${PGDATA_PATH:-./pgdata}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    profiles: ["history", "full"]
+
+  sentinel-core:
+    build:
+      context: ./packages/sentinel-core
+      dockerfile: Dockerfile
+    ports:
+      - "${SENTINEL_PORT:-8080}:8080"
+    environment:
+      SENTINEL_JWT_SECRET: ${SENTINEL_JWT_SECRET:?SENTINEL_JWT_SECRET is required}
+      SENTINEL_REDIS_URL: redis://redis:6379
+      SENTINEL_POSTGRES_URL: ${SENTINEL_POSTGRES_URL:-}
+      SENTINEL_ADMIN_USERNAME: ${SENTINEL_ADMIN_USERNAME:-admin}
+      SENTINEL_ADMIN_PASSWORD: ${SENTINEL_ADMIN_PASSWORD:-admin}
+      SENTINEL_LOG_LEVEL: ${SENTINEL_LOG_LEVEL:-INFO}
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./packages/sentinel-viz/dist:/app/sentinel-viz-dist:ro
+    profiles: ["basic", "full", "history", "mock"]
+
+  sentinel-rf:
+    build:
+      context: ./packages/sentinel-rf
+      dockerfile: Dockerfile
+    ports:
+      - "5050:5050"
+    privileged: true
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    environment:
+      SENTINEL_JWT_SECRET: ${SENTINEL_JWT_SECRET}
+      SENTINEL_REDIS_URL: redis://redis:6379
+      SENTINEL_RF_MOCK: ${SENTINEL_RF_MOCK:-false}
+      SENTINEL_ADSB_DEVICE_INDEX: ${SENTINEL_ADSB_DEVICE_INDEX:-0}
+      SENTINEL_LOG_LEVEL: ${SENTINEL_LOG_LEVEL:-INFO}
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles: ["basic", "full", "history", "mock"]
+
+  sentinel-osint:
+    build:
+      context: ./packages/sentinel-osint
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      SENTINEL_JWT_SECRET: ${SENTINEL_JWT_SECRET}
+      SENTINEL_REDIS_URL: redis://redis:6379
+      SENTINEL_POSTGRES_URL: ${SENTINEL_POSTGRES_URL:-postgresql+asyncpg://sentinel:sentinel@postgres:5432/sentinel}
+      SENTINEL_WIGLE_API_KEY: ${SENTINEL_WIGLE_API_KEY:-}
+      SENTINEL_STRAVA_CLIENT_ID: ${SENTINEL_STRAVA_CLIENT_ID:-}
+      SENTINEL_STRAVA_CLIENT_SECRET: ${SENTINEL_STRAVA_CLIENT_SECRET:-}
+      SENTINEL_LOG_LEVEL: ${SENTINEL_LOG_LEVEL:-INFO}
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles: ["full", "history", "mock"]
+
+  sentinel-ai:
+    build:
+      context: ./packages/sentinel-ai
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      SENTINEL_JWT_SECRET: ${SENTINEL_JWT_SECRET}
+      SENTINEL_REDIS_URL: redis://redis:6379
+      SENTINEL_POSTGRES_URL: ${SENTINEL_POSTGRES_URL:-postgresql+asyncpg://sentinel:sentinel@postgres:5432/sentinel}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?ANTHROPIC_API_KEY is required for sentinel-ai}
+      SENTINEL_AI_MAX_CALLS_PER_HOUR: ${SENTINEL_AI_MAX_CALLS_PER_HOUR:-100}
+      SENTINEL_LOG_LEVEL: ${SENTINEL_LOG_LEVEL:-INFO}
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles: ["full", "history", "mock"]
+
+volumes:
+  redis_data:

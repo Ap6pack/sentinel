@@ -1,0 +1,51 @@
+# Environment
+.env
+.env.local
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+packages/sentinel-viz/dist/
+packages/sentinel-viz/.env.local
+
+# Data
+pgdata/
+*.sqlite
+*.db
+
+# Secrets
+*.pem
+*.key
+*.crt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Claude Code local settings (personal overrides only — project settings are committed)
+.claude/settings.local.json
+
+# Logs
+*.log
+logs/
+
+# Docker volumes
+redis_data/

@@ -1,0 +1,23 @@
+{
+  "name": "sentinel-viz",
+  "version": "0.1.0",
+  "description": "3D globe visualisation layer for SENTINEL",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .js",
+    "format": "prettier --write src"
+  },
+  "dependencies": {
+    "cesium": "^1.116.0",
+    "satellite.js": "^5.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0",
+    "vite-plugin-cesium": "^1.2.23",
+    "eslint": "^9.0.0",
+    "prettier": "^3.2.0"
+  }
+}

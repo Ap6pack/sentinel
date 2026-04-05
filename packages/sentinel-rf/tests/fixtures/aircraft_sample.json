@@ -1,0 +1,62 @@
+{
+  "now": 1712345678.0,
+  "messages": 1234,
+  "aircraft": [
+    {
+      "hex": "3c4a6f",
+      "flight": "DLH441  ",
+      "lat": 51.5074,
+      "lon": -0.1278,
+      "altitude": 35000,
+      "speed": 430,
+      "track": 278,
+      "squawk": "1000",
+      "rssi": -8.5,
+      "messages": 142
+    },
+    {
+      "hex": "40762f",
+      "flight": "BAW256  ",
+      "lat": 51.4700,
+      "lon": -0.4543,
+      "altitude": 5200,
+      "speed": 180,
+      "track": 90,
+      "squawk": "5241",
+      "rssi": -3.1,
+      "messages": 87
+    },
+    {
+      "hex": "a1b2c3",
+      "flight": "UAL901  ",
+      "lat": 48.8566,
+      "lon": 2.3522,
+      "altitude": 41000,
+      "speed": 490,
+      "track": 45,
+      "squawk": "2134",
+      "rssi": -12.0,
+      "messages": 315
+    },
+    {
+      "hex": "bad000",
+      "lat": 200.0,
+      "lon": 0.0,
+      "altitude": 1000,
+      "messages": 1
+    },
+    {
+      "hex": "nocoord",
+      "flight": "GHOST   ",
+      "altitude": 10000,
+      "messages": 5
+    },
+    {
+      "hex": "",
+      "lat": 50.0,
+      "lon": 0.0,
+      "altitude": 5000,
+      "messages": 2
+    }
+  ]
+}
