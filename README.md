@@ -58,7 +58,7 @@ open http://localhost:8080
 Default credentials: `admin` / `admin`
 
 For deployment options, hardware setup, and production configuration see
-[docs/SETUP.md](docs/SETUP.md).
+[docs/SETUP.md](docs/SETUP).
 
 ---
 
@@ -77,7 +77,7 @@ sentinel-viz      — CesiumJS globe, shader pipeline, timeline scrubber
 sentinel-ai       — correlation engine, alert generation
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design,
+See [docs/ARCHITECTURE](docs/ARCHITECTURE) for the full design,
 data flow, and deployment profiles.
 
 ---
@@ -86,10 +86,10 @@ data flow, and deployment profiles.
 
 | Document | Description |
 |---|---|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, module map, data flow |
-| [docs/SETUP.md](docs/SETUP.md) | Installation, hardware, Docker profiles |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Development workflow, PR process |
-| [CHANGELOG.md](CHANGELOG.md) | Release history |
+| [docs/ARCHITECTURE](docs/ARCHITECTURE) | System design, module map, data flow |
+| [docs/SETUP](docs/SETUP) | Installation, hardware, Docker profiles |
+| [CONTRIBUTING](CONTRIBUTING) | Development workflow, PR process |
+| [CHANGELOG](CHANGELOG) | Release history |
 
 ---
 
