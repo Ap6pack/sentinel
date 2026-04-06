@@ -1,25 +1,64 @@
 # Changelog
 
-## [m3-rf-globe] — 2026-04-05
+All notable changes to this project will be documented in this file.
 
-### M3 — RF → Globe integration
-- sentinel-core: auth, bus bridge, reverse proxy, health aggregator
-- End-to-end: local SDR feed → Redis → WebSocket → CesiumJS globe
-- 51 tests passing
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-### M2 — Globe layer
-- CesiumJS globe with Google Photorealistic 3D Tiles
-- AircraftLayer, VesselLayer, SatelliteLayer (CelesTrak TLE + SGP4)
-- PostFx shaders: NVG, FLIR, CRT
-- ControlPanel, CameraPresets, AlertDrawer, InfoPanel
-- Dev mock feed with VITE_NO_MOCK=1 escape hatch
+## [Unreleased]
 
-### M1 — RF pipeline  
-- ADSBDecoder poll-based with live and mock replay modes
-- RFPublisher with GPS enrichment
-- Flask-SocketIO app, health endpoint
+## [0.3.0] - 2026-04-05
 
-### M0 — Foundation
-- sentinel-common: EventEnvelope, EventKind, BusPublisher, BusConsumer, geo utils
-- Redis Streams event bus
-- Docker Compose baseline
+Tag: `m3-rf-globe`
+
+### Added
+- **sentinel-core** package — FastAPI platform wrapper
+  - JWT authentication (issue, verify, middleware)
+  - Bus bridge: Redis Streams XREAD to WebSocket fan-out with per-client filtering
+  - Reverse proxy routing `/api/{rf,osint,ai}/*` to module backends
+  - Health aggregator polling all module `/api/v1/health` endpoints
+  - CORS middleware, login endpoint, WebSocket `/ws/stream`
+- End-to-end integration: mock RF decoder publishes to Redis, bridge forwards to browser via WebSocket
+- 18 unit tests for sentinel-core (auth, bridge filtering, app routes, health)
+
+## [0.2.0] - 2026-04-05
+
+### Added
+- **sentinel-viz** package — CesiumJS 3D globe visualisation
+  - Globe with Google Photorealistic 3D Tiles (asset 2275207), `requestRenderMode: true`
+  - AircraftLayer (cyan points, 2000 cap, 60s prune, `NearFarScalar` + `DistanceDisplayCondition`)
+  - VesselLayer (yellow points, 2000 cap, 120s prune)
+  - SatelliteLayer (CelesTrak TLE fetch, SGP4 propagation via satellite.js, 500 cap)
+  - AlertLayer (red pins for AI-generated alerts)
+  - LayerManager with event routing and visibility toggles
+  - BusClient WebSocket consumer with auto-reconnect and exponential backoff
+  - PostFxManager with NVG, FLIR, and CRT full-screen GLSL shaders
+  - ControlPanel UI (layer checkboxes, shader mode buttons)
+  - CameraPresets bound to Q/W/E keys (London, Heathrow, English Channel)
+  - InfoPanel click-on-entity popup
+  - Mock event feed for development (`VITE_NO_MOCK=1` to disable)
+  - Vite build with `vite-plugin-cesium`
+
+## [0.1.0] - 2026-04-05
+
+### Added
+- **sentinel-common** package — shared contracts and event bus
+  - `EventEnvelope` Pydantic model with coordinate validation and Redis serialisation
+  - `EventKind` StrEnum (13 kinds: aircraft, vessel, wifi, bluetooth, pager, aprs, weather_sat, profile, profile_link, alert, correlation, heartbeat, health)
+  - `BusPublisher` (Redis Streams XADD) and `BusConsumer` (XREADGROUP with consumer groups and kind filtering)
+  - `SentinelSettings` via pydantic-settings reading `SENTINEL_*` env vars
+  - `haversine_m()` and `bbox_contains()` geo helpers
+  - 16 unit tests
+- **sentinel-rf** package — RF/SDR signal intelligence layer
+  - `BaseDecoder` ABC with subprocess lifecycle management and exponential backoff restart
+  - `ADSBDecoder` poll-based decoder with live mode (HTTP poll of dump1090-rs) and mock replay mode
+  - `RFPublisher` with GPS coordinate enrichment for coord-less events
+  - Flask-SocketIO app with `/api/v1/health` and `/api/v1/decoders` endpoints
+  - Mock mode (`SENTINEL_RF_MOCK=true`) replays `tests/fixtures/aircraft_sample.json`
+  - 17 unit tests
+- Docker Compose configuration with profiles (basic, full, history, mock)
+- `.gitignore`, `.env.example` files, copyright headers
+
+[Unreleased]: https://github.com/Ap6pack/sentinel/compare/m3-rf-globe...HEAD
+[0.3.0]: https://github.com/Ap6pack/sentinel/releases/tag/m3-rf-globe
+[0.2.0]: https://github.com/Ap6pack/sentinel/releases/tag/m3-rf-globe
+[0.1.0]: https://github.com/Ap6pack/sentinel/releases/tag/m3-rf-globe
