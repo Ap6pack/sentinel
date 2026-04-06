@@ -2,7 +2,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-51%20passing-brightgreen)]()
-[![Status](https://img.shields.io/badge/status-active%20development-blue)]()
+[![Status](https://img.shields.io/badge/status-active%20development-blue)]() 
 
 > *Open-source spatial intelligence — RF signals, OSINT, and live geospatial
 > data fused into a single operational picture.*
