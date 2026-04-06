@@ -27,7 +27,7 @@ them.
 
 No cloud dependency. No subscription. Self-hosted.
 
-![Full stack screenshot — aircraft tracks, OSINT profile pins, and AI alerts](docs/screenshots/m6-full-stack.png)
+![Full stack screenshot — aircraft tracks, OSINT profile pins, and AI alerts](docs/screenshots/TODO.png)
 
 ---
 
@@ -58,7 +58,7 @@ open http://localhost:8080
 Default credentials: `admin` / `admin`
 
 For deployment options, hardware setup, and production configuration see
-[docs/SETUP.md](docs/SETUP).
+[docs/SETUP](docs/SETUP).
 
 ---
 
