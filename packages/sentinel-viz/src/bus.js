@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 const RECONNECT_BASE_MS = 1000;
 const RECONNECT_MAX_MS = 30_000;

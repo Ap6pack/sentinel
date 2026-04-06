@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 import { PostProcessStage } from 'cesium';
 import nvgSource from './nvg.glsl?raw';

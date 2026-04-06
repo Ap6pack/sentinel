@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 /**
  * Left sidebar control panel — layer toggles and shader mode selector.

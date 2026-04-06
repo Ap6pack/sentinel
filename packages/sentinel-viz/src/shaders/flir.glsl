@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 // Forward-Looking Infrared (thermal) post-processing shader
 
 uniform sampler2D colorTexture;

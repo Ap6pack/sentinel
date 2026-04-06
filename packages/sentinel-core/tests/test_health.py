@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 from sentinel_core.health.aggregator import aggregate_health
 

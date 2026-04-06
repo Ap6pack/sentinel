@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 /**
  * Mock event generator for development without a running backend.

@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 // Night Vision Goggle post-processing shader
 
 uniform sampler2D colorTexture;

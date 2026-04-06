@@ -11,7 +11,7 @@ Thanks for your interest. SENTINEL is open-source under Apache 2.0.
 ## Development setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/sentinel.git
+git clone https://github.com/Ap6pack/sentinel.git
 cd sentinel
 
 # Python packages

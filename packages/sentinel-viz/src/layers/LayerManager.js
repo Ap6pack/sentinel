@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 /**
  * Base class for all data layers. Subclasses implement onEvent() and

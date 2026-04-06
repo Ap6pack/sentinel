@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 from .bus import BusConsumer, BusPublisher
 from .config import SentinelSettings, settings

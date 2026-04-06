@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 // CRT monitor post-processing shader — scanlines + barrel distortion + vignette
 
 uniform sampler2D colorTexture;

@@ -1,4 +1,4 @@
-# Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 import pytest
 from sentinel_common.envelope import EventEnvelope

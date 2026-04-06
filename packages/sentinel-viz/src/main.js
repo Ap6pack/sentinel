@@ -1,4 +1,4 @@
-// Copyright (c) 2026 Veritas Aequitas Holdings LLC. All rights reserved.
+
 
 import { initGlobe } from './globe.js';
 import { config } from './config.js';
