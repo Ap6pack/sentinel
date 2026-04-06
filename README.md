@@ -1,110 +1,107 @@
 # SENTINEL
 
-**Open-source spatial intelligence platform — RF signals, OSINT, and 3D geospatial visualisation in one stack.**
-
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Status: Pre-alpha](https://img.shields.io/badge/status-pre--alpha-orange)]()
+[![Tests](https://img.shields.io/badge/tests-51%20passing-brightgreen)]()
+[![Status](https://img.shields.io/badge/status-active%20development-blue)]()
 
-SENTINEL fuses three intelligence layers that have never been combined in an open-source tool:
-
-- **Layer 1 — Physical RF** — ADS-B aircraft, AIS vessels, WiFi/Bluetooth scanning, pager decoding, weather satellites via a $25 RTL-SDR dongle
-- **Layer 2 — Internet OSINT** — fitness route analysis, review profile linking, Wi-Fi geolocation, public records — building identity-linked geo-profiles from public data
-- **Layer 3 — 3D Globe** — CesiumJS visualisation with live data overlays, shader modes (NVG, FLIR, CRT), satellite tracking, and 4D temporal replay
-
-All three layers are independently deployable modules connected by a shared event bus. A platform wrapper ties them together behind a single authenticated interface.
+> *Open-source spatial intelligence — RF signals, OSINT, and live geospatial
+> data fused into a single operational picture.*
 
 ---
 
-## What it looks like
+## Overview
 
-> Screenshots coming at M3 — local SDR aircraft on the 3D globe.
+SENTINEL combines three capabilities that have never existed together in an
+open-source stack:
+
+- **RF signal collection** — a $25 RTL-SDR dongle decodes ADS-B aircraft
+  transponders, AIS vessel positions, 433MHz sensors, pager traffic, and weather
+  satellite imagery directly from the air around you
+- **OSINT correlation** — public fitness routes, review profiles, Wi-Fi
+  geolocation, and property records are linked by an identity graph and pinned
+  to coordinates
+- **3D visualisation** — a CesiumJS globe with Google Photorealistic 3D Tiles,
+  live tracks, satellite orbits, NVG/FLIR/CRT shader modes, and a timeline
+  scrubber for 4D event replay
+
+All three layers are independently deployable modules connected by a shared
+event bus. An AI correlation engine generates alerts when signals match profiles.
+
+No cloud dependency. No subscription. Self-hosted.
 
 ---
 
-## Quick start
+## Getting started
+
+SENTINEL runs fully in mock mode — no hardware required to explore the platform.
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/sentinel.git
+git clone https://github.com/Ap6pack/sentinel.git
 cd sentinel
-cp .env.example .env
-# Edit .env — add your SENTINEL_JWT_SECRET and VITE_CESIUM_TOKEN
-docker compose --profile basic up -d
+./setup.sh
+```
+
+Add two values to `.env`:
+
+```bash
+VITE_CESIUM_TOKEN=       # free at https://ion.cesium.com/
+SENTINEL_JWT_SECRET=     # generated automatically by setup.sh
+```
+
+Then start the stack:
+
+```bash
+docker compose -f infra/docker-compose.yml --profile basic up -d
 open http://localhost:8080
 ```
 
-Default login: `admin` / `admin` — **change immediately** via `SENTINEL_ADMIN_PASSWORD` in `.env`.
+Default credentials: `admin` / `admin`
 
-No SDR hardware? Set `SENTINEL_RF_MOCK=true` in `.env` to replay fixture data.
+For deployment options, hardware setup, and production configuration see
+[docs/SETUP.md](docs/SETUP.md).
 
 ---
 
 ## Architecture
 
-Five independent Python packages + one JavaScript frontend, communicating only through a Redis Streams event bus:
+Six independent packages communicate exclusively through a Redis Streams event
+bus. No module imports from another. Each can be deployed, tested, and run
+in isolation.
 
 ```
-sentinel-common   — shared EventEnvelope schema, bus client, geo utils
-sentinel-core     — auth, reverse proxy, bus→WebSocket bridge, Docker orchestration
-sentinel-rf       — SDR pipeline: ADS-B, AIS, WiFi, BT, pagers, weather sats
-sentinel-osint    — OSINT collectors, identity graph linker, profile store
-sentinel-viz      — CesiumJS 3D globe, shader pipeline, timeline scrubber
-sentinel-ai       — Claude API correlation engine, alert generation
+sentinel-common   — event schema, bus client, geo utilities
+sentinel-core     — auth, reverse proxy, bus→WebSocket bridge
+sentinel-rf       — SDR pipeline: ADS-B, AIS, WiFi, pagers, weather sats
+sentinel-osint    — OSINT collectors, identity graph, profile store
+sentinel-viz      — CesiumJS globe, shader pipeline, timeline scrubber
+sentinel-ai       — correlation engine, alert generation
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design,
+data flow, and deployment profiles.
 
 ---
 
-## Hardware
+## Documentation
 
-| Hardware | Purpose | Price |
-|---|---|---|
-| RTL-SDR dongle (RTL2832U) | All RF features | ~$25 |
-| WiFi adapter (monitor mode) | WiFi scanning | ~$20 |
-| GPS unit | Location tagging | ~$10 |
-
-Everything works without hardware using `SENTINEL_RF_MOCK=true`.
-
----
-
-## Build status (milestones)
-
-- [ ] M0 — monorepo running, Redis healthy, mock events on bus
-- [ ] M1 — RF standalone: SDR aircraft on sentinel-rf Leaflet map
-- [ ] M2 — Globe standalone: CesiumJS globe with OpenSky + satellites
-- [ ] M3 — RF → Globe: local dump1090 replaces OpenSky *(public release)*
-- [ ] M4 — OSINT profile: identity-linked geo-profile from public data
-- [ ] M5 — Unified wrapper: all layers behind single auth at :8080
-- [ ] M6 — Profile pins on globe
-- [ ] M7 — AI alert: BSSID match fires correlation alert
-- [ ] M8 — Full stack demo
+| Document | Description |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, module map, data flow |
+| [docs/SETUP.md](docs/SETUP.md) | Installation, hardware, Docker profiles |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Development workflow, PR process |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
 
 ---
 
-## Project structure
+## Responsible use
 
-```
-sentinel/
-├── packages/
-│   ├── sentinel-common/     # Shared contracts — read first
-│   ├── sentinel-core/       # Platform wrapper
-│   ├── sentinel-rf/         # RF/SDR layer
-│   ├── sentinel-osint/      # OSINT layer
-│   ├── sentinel-viz/        # 3D globe frontend
-│   └── sentinel-ai/         # Correlation engine
-├── infra/                   # Docker Compose, nginx
-├── docs/                    # Architecture, hardware guide
-├── tests/                   # Integration tests
-├── CLAUDE.md                # Claude Code meta-skill (read first)
-└── SKILL-*.md               # Per-module agent skill files
-```
+SENTINEL is a passive receive platform. ADS-B, AIS, and weather satellite
+signals are intentionally broadcast and legal to receive. Public OSINT sources
+are used within their terms of service.
 
----
-
-## Contributing
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a PR.
-Read [CLAUDE.md](CLAUDE.md) before using Claude Code on this repo.
+WiFi monitor mode and pager decoding are subject to jurisdiction-specific
+regulations. This software is intended for research, education, and authorised
+security work only.
 
 ---
 
