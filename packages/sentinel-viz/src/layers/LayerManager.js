@@ -16,7 +16,7 @@ export class BaseLayer {
    * Called with a parsed EventEnvelope when this layer's kind arrives.
    * @param {Object} envelope
    */
-  onEvent(envelope) {}
+  onEvent(_envelope) {}
 
   /**
    * Show or hide all entities managed by this layer.

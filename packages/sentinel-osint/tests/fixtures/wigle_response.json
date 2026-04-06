@@ -1,0 +1,39 @@
+{
+  "success": true,
+  "totalResults": 3,
+  "first": 1,
+  "last": 3,
+  "resultCount": 3,
+  "results": [
+    {
+      "netid": "AA:BB:CC:DD:EE:01",
+      "ssid": "HomeNet_Smith",
+      "trilat": 51.5074,
+      "trilong": -0.1278,
+      "channel": 6,
+      "encryption": "wpa2",
+      "type": "infra",
+      "lastupdt": "2026-01-15"
+    },
+    {
+      "netid": "AA:BB:CC:DD:EE:02",
+      "ssid": "BTHub-XXXX",
+      "trilat": 51.5080,
+      "trilong": -0.1285,
+      "channel": 11,
+      "encryption": "wpa2",
+      "type": "infra",
+      "lastupdt": "2026-02-01"
+    },
+    {
+      "netid": "AA:BB:CC:DD:EE:03",
+      "ssid": "",
+      "trilat": 51.5065,
+      "trilong": -0.1270,
+      "channel": 1,
+      "encryption": "open",
+      "type": "infra",
+      "lastupdt": "2025-12-20"
+    }
+  ]
+}

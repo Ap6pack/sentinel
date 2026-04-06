@@ -11,23 +11,23 @@
 
 ## Overview
 
-SENTINEL combines three capabilities that have never existed together in an
-open-source stack:
+Most geospatial intelligence tools are either cloud-hosted dashboards
+that require your data to leave your network, or single-purpose SDR
+applications that do one thing well. SENTINEL is neither.
 
-- **RF signal collection** — a $25 RTL-SDR dongle decodes ADS-B aircraft
-  transponders, AIS vessel positions, 433MHz sensors, pager traffic, and weather
-  satellite imagery directly from the air around you
-- **OSINT correlation** — public fitness routes, review profiles, Wi-Fi
-  geolocation, and property records are linked by an identity graph and pinned
-  to coordinates
-- **3D visualisation** — a CesiumJS globe with Google Photorealistic 3D Tiles,
-  live tracks, satellite orbits, NVG/FLIR/CRT shader modes, and a timeline
-  scrubber for 4D event replay
+It connects a physical radio receiver to an identity correlation engine
+to a 3D globe, all running locally, all open-source. A signal picked
+up by a $25 dongle can be cross-referenced against public records and
+surfaced as an alert on the same globe tracking aircraft overhead.
 
-All three layers are independently deployable modules connected by a shared
-event bus. An AI correlation engine generates alerts when signals match profiles.
+The three layers RF collection, OSINT correlation, and visualisation —
+are independent modules. Run one, run all three, or replace any layer
+with your own implementation. The event bus is the only contract between
+them.
 
 No cloud dependency. No subscription. Self-hosted.
+
+![Full stack screenshot — aircraft tracks, OSINT profile pins, and AI alerts](docs/screenshots/m6-full-stack.png)
 
 ---
 
@@ -51,7 +51,7 @@ SENTINEL_JWT_SECRET=     # generated automatically by setup.sh
 Then start the stack:
 
 ```bash
-docker compose -f infra/docker-compose.yml --profile basic up -d
+docker compose --profile basic up -d
 open http://localhost:8080
 ```
 

@@ -1,0 +1,10 @@
+{
+  "alert_warranted": false,
+  "confidence": 0.3,
+  "summary": "Aircraft overflight near a known profile but no corroborating signals",
+  "reasoning": "A single aircraft event was observed near the profile location but without any WiFi, Bluetooth, or other RF signals to corroborate a meaningful correlation.",
+  "recommended_action": "No action required",
+  "linked_entity_ids": [],
+  "lat": null,
+  "lon": null
+}

@@ -1,61 +1,64 @@
 
 
-import pytest
+from unittest.mock import MagicMock, patch
 
 from sentinel_common.envelope import EventEnvelope
 from sentinel_common.kinds import EventKind
-from sentinel_rf.publisher import RFPublisher
+from sentinel_rf.publisher import SyncRFPublisher
 
 
-class FakeBus:
-    def __init__(self):
-        self.published: list[EventEnvelope] = []
+def _make_publisher() -> SyncRFPublisher:
+    """Create a SyncRFPublisher with a mocked Redis client."""
+    with patch("sentinel_rf.publisher.redis") as mock_redis:
+        mock_client = MagicMock()
+        mock_redis.from_url.return_value = mock_client
+        pub = SyncRFPublisher(redis_url="redis://fake:6379")
+    return pub, mock_client
 
-    async def publish(self, envelope: EventEnvelope):
-        self.published.append(envelope)
 
-
-async def test_publish_passthrough():
+def test_publish_passthrough():
     """Events with coords should pass through unchanged."""
-    bus = FakeBus()
-    pub = RFPublisher(bus=bus)
+    pub, mock_client = _make_publisher()
 
     env = EventEnvelope(
         source="rf", kind=EventKind.AIRCRAFT, lat=51.5, lon=-0.1, entity_id="TEST-1"
     )
-    await pub.publish(env)
+    pub.publish(env)
 
-    assert len(bus.published) == 1
-    assert bus.published[0].lat == 51.5
-    assert bus.published[0].lon == -0.1
+    mock_client.xadd.assert_called_once()
+    call_args = mock_client.xadd.call_args
+    assert call_args[0][0] == "sentinel:events"
 
 
-async def test_gps_enrichment():
+def test_gps_enrichment():
     """Events without coords should be enriched with cached GPS."""
-    bus = FakeBus()
-    pub = RFPublisher(bus=bus)
+    pub, mock_client = _make_publisher()
     pub._gps_lat = 48.8
     pub._gps_lon = 2.3
 
     env = EventEnvelope(
         source="rf", kind=EventKind.WIFI, entity_id="WIFI-AA:BB:CC:DD:EE:FF"
     )
-    await pub.publish(env)
+    pub.publish(env)
 
-    assert len(bus.published) == 1
-    assert bus.published[0].lat == 48.8
-    assert bus.published[0].lon == 2.3
+    mock_client.xadd.assert_called_once()
+    # Verify the data was enriched by parsing the JSON
+    import json
+    data = json.loads(mock_client.xadd.call_args[0][1]["data"])
+    assert data["lat"] == 48.8
+    assert data["lon"] == 2.3
 
 
-async def test_no_gps_no_enrichment():
+def test_no_gps_no_enrichment():
     """Without GPS fix, events without coords stay without coords."""
-    bus = FakeBus()
-    pub = RFPublisher(bus=bus)
+    pub, mock_client = _make_publisher()
 
     env = EventEnvelope(
         source="rf", kind=EventKind.WIFI, entity_id="WIFI-AA:BB:CC:DD:EE:FF"
     )
-    await pub.publish(env)
+    pub.publish(env)
 
-    assert bus.published[0].lat is None
-    assert bus.published[0].lon is None
+    import json
+    data = json.loads(mock_client.xadd.call_args[0][1]["data"])
+    assert data["lat"] is None
+    assert data["lon"] is None

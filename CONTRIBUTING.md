@@ -44,7 +44,7 @@ pytest packages/ -x -q
 pytest packages/ --cov=sentinel_common --cov-report=term-missing -q
 
 # Integration tests (requires Docker)
-docker compose -f infra/docker-compose.yml --profile mock up -d
+docker compose --profile mock up -d
 pytest tests/ -x -q -m integration
 ```
 

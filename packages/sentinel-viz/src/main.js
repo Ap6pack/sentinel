@@ -8,10 +8,12 @@ import { AircraftLayer } from './layers/AircraftLayer.js';
 import { VesselLayer } from './layers/VesselLayer.js';
 import { SatelliteLayer } from './layers/SatelliteLayer.js';
 import { AlertLayer } from './layers/AlertLayer.js';
+import { ProfileLayer } from './layers/ProfileLayer.js';
 import { PostFxManager } from './shaders/PostFxManager.js';
 import { ControlPanel } from './ui/ControlPanel.js';
 import { CameraPresets } from './ui/CameraPresets.js';
 import { InfoPanel } from './ui/InfoPanel.js';
+import { AlertDrawer } from './ui/AlertDrawer.js';
 import { startMockFeed } from './dev/mockEvents.js';
 import landmarks from './config/landmarks.json';
 
@@ -26,11 +28,13 @@ async function main() {
   const vesselLayer = new VesselLayer(viewer);
   const satelliteLayer = new SatelliteLayer(viewer);
   const alertLayer = new AlertLayer(viewer);
+  const profileLayer = new ProfileLayer(viewer);
 
   lm.register('aircraft', aircraftLayer);
   lm.register('vessel', vesselLayer);
   lm.register('satellite', satelliteLayer);
   lm.register('alert', alertLayer);
+  lm.register('profile', profileLayer);
 
   // Enable aircraft by default
   lm.toggle('aircraft', true);
@@ -43,9 +47,13 @@ async function main() {
   const cp = new ControlPanel(lm, postFx);
   cp.mount();
 
-  // Info panel (click-on-entity)
-  const infoPanel = new InfoPanel(viewer);
+  // Info panel (click-on-entity) — wired to ProfileLayer and AlertLayer
+  const infoPanel = new InfoPanel(viewer, profileLayer, alertLayer);
   infoPanel.mount();
+
+  // Alert drawer — right sidebar feed of AI alerts
+  const alertDrawer = new AlertDrawer(alertLayer);
+  alertDrawer.mount();
 
   // Camera presets — Q/W/E
   const cam = new CameraPresets(viewer);
@@ -59,7 +67,7 @@ async function main() {
 
   // Connect to the event bus via WebSocket
   const bus = new BusClient(config.wsUrl, (envelope) => lm.route(envelope));
-  bus.connect({ kinds: ['aircraft', 'vessel', 'alert'] });
+  bus.connect({ kinds: ['aircraft', 'vessel', 'alert', 'profile'] });
 
   // In dev mode without a backend, start mock event feed
   if (import.meta.env.DEV && !import.meta.env.VITE_NO_MOCK) {

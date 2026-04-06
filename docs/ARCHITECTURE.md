@@ -89,7 +89,7 @@ RTL-SDR USB dongle
 | `mock` | full, RF mock mode | CI and development without hardware |
 
 ```bash
-docker compose -f infra/docker-compose.yml --profile basic up -d
+docker compose --profile basic up -d
 ```
 
 ## Port map

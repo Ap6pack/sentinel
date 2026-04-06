@@ -97,16 +97,15 @@ async def test_mock_replay_loops():
 
 
 async def test_mock_publishes_to_bus(monkeypatch):
-    """Verify mock events flow through RFPublisher to a (fake) bus."""
-    from sentinel_rf.publisher import RFPublisher
+    """Verify mock events flow through SyncRFPublisher to Redis."""
+    from unittest.mock import MagicMock, patch
 
-    published: list[EventEnvelope] = []
+    from sentinel_rf.publisher import SyncRFPublisher
 
-    class FakeBus:
-        async def publish(self, envelope):
-            published.append(envelope)
-
-    publisher = RFPublisher(bus=FakeBus())
+    with patch("sentinel_rf.publisher.redis") as mock_redis:
+        mock_client = MagicMock()
+        mock_redis.from_url.return_value = mock_client
+        publisher = SyncRFPublisher(redis_url="redis://fake:6379")
 
     decoder = ADSBDecoder(poll_interval=0.01)
     decoder._running = True
@@ -115,14 +114,13 @@ async def test_mock_publishes_to_bus(monkeypatch):
 
     async def on_event(envelope: EventEnvelope):
         nonlocal events_seen
-        await publisher.publish(envelope)
+        publisher.publish(envelope)
         events_seen += 1
         if events_seen >= 3:
             decoder._running = False
 
     await decoder.run(on_event)
 
-    assert len(published) == 3
-    for env in published:
-        assert isinstance(env, EventEnvelope)
-        assert env.kind == EventKind.AIRCRAFT
+    assert mock_client.xadd.call_count == 3
+    for call in mock_client.xadd.call_args_list:
+        assert call[0][0] == "sentinel:events"

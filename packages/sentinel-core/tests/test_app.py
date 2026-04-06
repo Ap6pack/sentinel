@@ -61,3 +61,32 @@ async def test_proxy_with_valid_token(token):
         )
     # 502 or connection error is expected (no RF module running) — not 401
     assert resp.status_code != 401
+
+
+async def test_proxy_osint_requires_auth():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as c:
+        resp = await c.get("/api/osint/api/v1/health")
+    assert resp.status_code == 401
+
+
+async def test_proxy_osint_with_valid_token(token):
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as c:
+        resp = await c.get(
+            "/api/osint/api/v1/health",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+    # 502 expected (no osint module running locally) — but not 401
+    assert resp.status_code != 401
+
+
+async def test_proxy_osint_profiles_with_auth(token):
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as c:
+        resp = await c.get(
+            "/api/osint/api/v1/profiles?lat=51.5&lon=-0.1&radius_m=1000",
+            headers={"Authorization": f"Bearer {token}"},
+        )
+    # 502 expected (no osint module running) — confirms proxy routes correctly
+    assert resp.status_code != 401

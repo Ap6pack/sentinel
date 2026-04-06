@@ -1,5 +1,3 @@
-version: "3.9"
-
 # Profiles:
 #   basic   — redis + core + rf + viz (no OSINT, no AI, no Postgres)
 #   full    — all services
@@ -41,8 +39,8 @@ services:
 
   sentinel-core:
     build:
-      context: ./packages/sentinel-core
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/sentinel-core/Dockerfile
     ports:
       - "${SENTINEL_PORT:-8080}:8080"
     environment:
@@ -61,8 +59,8 @@ services:
 
   sentinel-rf:
     build:
-      context: ./packages/sentinel-rf
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/sentinel-rf/Dockerfile
     ports:
       - "5050:5050"
     privileged: true
@@ -81,14 +79,14 @@ services:
 
   sentinel-osint:
     build:
-      context: ./packages/sentinel-osint
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/sentinel-osint/Dockerfile
     ports:
       - "5001:5001"
     environment:
       SENTINEL_JWT_SECRET: ${SENTINEL_JWT_SECRET}
       SENTINEL_REDIS_URL: redis://redis:6379
-      SENTINEL_POSTGRES_URL: ${SENTINEL_POSTGRES_URL:-postgresql+asyncpg://sentinel:sentinel@postgres:5432/sentinel}
+      SENTINEL_POSTGRES_URL: postgresql+asyncpg://sentinel:sentinel@postgres:5432/sentinel
       SENTINEL_WIGLE_API_KEY: ${SENTINEL_WIGLE_API_KEY:-}
       SENTINEL_STRAVA_CLIENT_ID: ${SENTINEL_STRAVA_CLIENT_ID:-}
       SENTINEL_STRAVA_CLIENT_SECRET: ${SENTINEL_STRAVA_CLIENT_SECRET:-}
@@ -96,23 +94,27 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     profiles: ["full", "history", "mock"]
 
   sentinel-ai:
     build:
-      context: ./packages/sentinel-ai
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: packages/sentinel-ai/Dockerfile
     ports:
       - "5002:5002"
     environment:
       SENTINEL_JWT_SECRET: ${SENTINEL_JWT_SECRET}
       SENTINEL_REDIS_URL: redis://redis:6379
-      SENTINEL_POSTGRES_URL: ${SENTINEL_POSTGRES_URL:-postgresql+asyncpg://sentinel:sentinel@postgres:5432/sentinel}
+      SENTINEL_POSTGRES_URL: postgresql+asyncpg://sentinel:sentinel@postgres:5432/sentinel
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?ANTHROPIC_API_KEY is required for sentinel-ai}
       SENTINEL_AI_MAX_CALLS_PER_HOUR: ${SENTINEL_AI_MAX_CALLS_PER_HOUR:-100}
       SENTINEL_LOG_LEVEL: ${SENTINEL_LOG_LEVEL:-INFO}
     depends_on:
       redis:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     profiles: ["full", "history", "mock"]
 

@@ -1,0 +1,10 @@
+{
+  "alert_warranted": true,
+  "confidence": 0.87,
+  "summary": "WiFi BSSID from RF scan matches known OSINT profile home network",
+  "reasoning": "BSSID AA:BB:CC:DD:EE:FF detected by SDR at 51.5074,-0.1278 matches WiGLE record linked to profile-abc123. Signal detected within 2 minutes of profile last-seen timestamp.",
+  "recommended_action": "Review profile-abc123 and cross-reference with recent ADS-B tracks in the area",
+  "linked_entity_ids": ["WIFI-AA:BB:CC:DD:EE:FF", "profile-abc123"],
+  "lat": 51.5074,
+  "lon": -0.1278
+}
