@@ -1,0 +1,25 @@
+# Changelog
+
+## [m3-rf-globe] — 2026-04-05
+
+### M3 — RF → Globe integration
+- sentinel-core: auth, bus bridge, reverse proxy, health aggregator
+- End-to-end: local SDR feed → Redis → WebSocket → CesiumJS globe
+- 51 tests passing
+
+### M2 — Globe layer
+- CesiumJS globe with Google Photorealistic 3D Tiles
+- AircraftLayer, VesselLayer, SatelliteLayer (CelesTrak TLE + SGP4)
+- PostFx shaders: NVG, FLIR, CRT
+- ControlPanel, CameraPresets, AlertDrawer, InfoPanel
+- Dev mock feed with VITE_NO_MOCK=1 escape hatch
+
+### M1 — RF pipeline  
+- ADSBDecoder poll-based with live and mock replay modes
+- RFPublisher with GPS enrichment
+- Flask-SocketIO app, health endpoint
+
+### M0 — Foundation
+- sentinel-common: EventEnvelope, EventKind, BusPublisher, BusConsumer, geo utils
+- Redis Streams event bus
+- Docker Compose baseline
